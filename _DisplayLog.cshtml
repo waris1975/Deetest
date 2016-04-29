@@ -1,0 +1,46 @@
+﻿@model IEnumerable<DDSReportingAgent.ViewModels.LogViewModel>
+@using PagedList
+@using PagedList.Mvc
+
+@{
+    ViewBag.Title = "Activity Log";
+}
+
+<h2>@ViewBag.Title</h2>
+                     
+
+@using (Html.BeginForm("_DisplayLog", "ReviewSchedule", FormMethod.Get))
+{
+<p>Search by:@Html.TextBox("searchString" , ViewBag.currentFilter as string)
+
+<input  type="submit"  value="search" /></p>  
+    
+}
+
+<ul class="list-group">
+    @foreach (var item in Model)
+    {
+<li class="list-group-item list-group-item-info">
+    <span class="label label-default">member ID</span> @Html.DisplayFor(modelItem => item.mc_event_sys_id) 
+    <span class="label label-default">Completion Date</span> @Html.DisplayFor(modelItem => item.dateCompletion) 
+    <span class="label label-default">Error Message</span> @Html.DisplayFor(modelItem => item.errormessage) 
+    <span class="label label-default">Job ID</span> @Html.DisplayFor(modelItem => item.jobid) 
+    </li>
+    }
+
+</ul>
+
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("_DisplayLog", new { page, mc_event_sys_id = Model.First().mc_event_sys_id }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "unobtrusive_" + Model.First().mc_event_sys_id, OnComplete = "PagedOnComplete" }))
+
+
+@section Styles{
+    <style type="text/css">
+        .table td, .table th
+        {
+            text-align: center;
+        }
+    </style>
+}
+
+
+

@@ -1,0 +1,181 @@
+﻿@model IEnumerable<MemberCommunications.Web.ViewModels.IndexReportViewModelSlim>
+@using PagedList
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Available Reports";
+    
+}
+
+<h2>@ViewBag.Title</h2>
+<br/>
+@using (Html.BeginForm())
+{
+
+    
+    <div class="row">
+  
+  <div class="col-sm-6">
+    <div class="input-group">
+      <input type="text" class="typeahead form-control" placeholder="Search for Report by Name..." id="SearchString" name="SearchString" type="text" value="@ViewBag.currentFilter" autocomplete="off">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="submit">Search</button>
+      </span>
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+</div><!-- /.row -->
+}
+<br/>
+
+<table class="table table-condensed table-striped table-hover">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.name)
+        </th>      
+       
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td style="text-align: left;">
+                @Html.DisplayFor(modelItem => item.name)
+            </td>
+            <td>
+                @Html.ActionLink("See Jobs for this Report", "_JobIndex", new { id = item.id }, new { @class = "btn btn-info getJobs", @dataid = item.id })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+
+            <div class="unobtrusive">
+
+                
+                    
+                <div id="unobtrusive_@item.id">
+
+                </div>
+            </div>
+            </td>
+        </tr>
+    }
+  
+
+</table>
+<br/>@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, currentFilter = @Url.Encode(ViewBag.currentFilter) }))
+
+@section Styles{
+    <style type="text/css">
+        .table td, .table th
+        {
+            text-align: center;
+        }
+    </style>
+}
+
+
+
+<div id="oncomplete"></div>
+
+@section Scripts{
+@Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+   <script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+        function PagedOnComplete(obj) {
+            console.log(obj);
+            var $oncomplete = $('#oncomplete');
+            $oncomplete
+                .text('Paging operation completed.')
+                .css('backgroundColor', 'yellow')
+                .fadeOut({
+                    complete: function() {
+                        $oncomplete.css('backgroundColor', 'transparent').text('').show();
+                    }
+                });
+        }
+
+        $(".getJobs").bind("click", function() {
+            //get the job id
+            var id = this.getAttribute("dataid");
+            if ($(this).hasClass("active")) {
+                $(this).removeClass("active");
+                $('#unobtrusive_' + id).parent().slideUp(300);
+
+            } else {
+
+                $(this).addClass("active");
+                $.ajax({
+                    url: "@Url.Content("~/")ReviewSchedule/_JobIndex",
+                    data: {
+                        reportId: id
+                    },
+                    method: "GET",
+                    dataType: "html",
+                    success: function(data) {
+                        $('#unobtrusive_' + id).html(data);
+                        bindSorts();
+                        $('#unobtrusive_' + id).parent().slideDown(300);
+                    }
+                });
+            }
+
+        });
+
+        $(".getJobs").click(function(e) {
+            e.preventDefault();
+        });
+
+        function bindSorts() {
+            $(".jobSort").bind("click", function() {
+                //get the job id
+                var id = this.getAttribute("data-id");
+                var sort = this.getAttribute("data-sort-val");
+                $.ajax({
+                    url: "@Url.Content("~/")ReviewSchedule/_JobIndex",
+                    data: {
+                        reportId: id,
+                        sortOrder: sort
+                    },
+                    method: "GET",
+                    dataType: "html",
+                    success: function(data) {
+                        $('#unobtrusive_' + id).html(data);
+                        bindSorts();
+                        $('#unobtrusive_' + id).parent().slideDown(300);
+                    }
+                });
+
+
+            });
+        }
+
+
+        $().ready(function() {
+            $(".unobtrusive").hide();
+        });
+
+
+    </script>
+
+<script type="text/javascript">
+//setup typeahead
+    var $input = $('.typeahead');
+    $.get("@Url.Content("~/")ReviewSchedule/Reportlookup?type=string", function (data) {
+        $input.typeahead({
+            source: data,
+            autoSelect: false,
+            minLength: 0,
+            showHintOnFocus: true,
+            items: 9
+
+        });
+    }, 'json');
+
+    $input.on("change", function () {
+        var current = $(this).typeahead("getActive");
+
+    });
+
+        
+    </script>
+}

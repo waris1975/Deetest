@@ -1,0 +1,335 @@
+﻿@model MemberCommunications.Web.ViewModels.JobViewModel
+@using PagedList
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Completed Job Details";
+    var disabledLog = " disabled ";
+    var disableFTP = " disabled ";
+    if (!Model.hasactivitylog) { disabledLog = ""; }
+    if (!Model.hassftplog) { disableFTP = ""; }
+   
+}
+<h2>
+    @ViewBag.Title</h2>
+<div class="row col-md-10">
+    <div class="row">
+        <div class="panel panel-primary">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <h2 id="maindetails">
+                    <span class="label label-default">@Html.DisplayNameFor(model => model.parentReportName)</span>
+                    @Html.DisplayFor(model => model.parentReportName)</h2>
+            </div>
+            <!-- Table -->
+            <table class="table">
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.run_start)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.run_start)
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.run_end)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.run_end)
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.messages)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.messages)
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <td>
+                        @Html.EditorFor(model => model.output_xml)
+                        <p>
+                            <input class="btn btn-info btnSave @(disabledLog)"
+                 id="btnRunLog" data-complete-text="Finished!" data-loading-text="Updating " data-error-text="Error!"
+                                data-toggle="collapse" aria-expanded="false"        
+                   data-id="@(Model.id)"    data-p-type="Log" type="submit" value="Update Activity log"/>
+
+                           @{
+                               if (Model.hasactivityrun)
+                               {
+                                            @Html.ActionLink("See Activity", "_DisplayLog", new { id = Model.id }, new { @class = "btn btn-primary" })
+                               }
+                                   }
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p id="content" class="col-xs-6">
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.EditorFor(model => model.output_location_1)
+                        <p>
+                            <input class="btn btn-info btnSave @(disableFTP)" 
+                                   id="btnRunSFTP" data-complete-text="FTP sent!" data-loading-text="Updating " data-error-text="Error!"
+                                   data-toggle="collapse" aria-expanded="false"        
+                                   data-id="@(Model.id)" data-p-type="SFTP" type="submit" value="Send SFTP" />
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p id="content2" class="col-xs-6">
+                        </p>
+                    </td>
+                </tr>
+                @* <tr>
+
+                <tr>
+                    <td>
+                    <p id="content2" class="col-xs-6"></P>
+          
+           
+                    </td>
+              </tr>
+               @* <tr>
+
+                    
+                    <td>
+                        @Html.EditorFor(model => model.upd_activity_log)
+                        <input id="upd_activity_log" type="checkbox" value="true" @(Model.upd_activity_log ? "checked=\"checked\"" : "")  />
+                       <input type="hidden" value="false" name="upd_activity_log" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.EditorFor(model => model.send_sftp)
+                          <input id="upd_activity_log" type="checkbox" value="true" @(Model.send_sftp ? "checked=\"checked\"" : "") />
+                          <input type="hidden" value="false" name="Remember" />
+                    </td>
+                   
+                </tr>
+               *@
+            </table>
+            @* <div class="form-group">
+    
+ @using(Html.BeginForm("Save", "Test", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    
+        <tr>
+            <td>File:</td>
+            <td>
+                <input type="file" name="UploadedFile" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="Submit" value="Send SFTP"/>
+            </td>
+        </tr>
+    
+}
+</div>*@
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+//        $(function () {
+//            refreshModals();
+//        });
+//        //refresh the list of jobs on the parent page
+//        window["RefreshJobs"] = function() {
+//            $.ajax({
+//                type: "GET",
+//                url: "@Url.Content("~/")Jobs/JobIndex/?id=@Model.id&allJobs=true",
+//                traditional: true,
+//                contentType: 'application/json; charset=utf-8',
+//                //data: JSON.stringify(param),
+//                success: function (data) {
+//                    //console.log(data);
+//                    $('div.jobIndex').html(data);
+//                    refreshModals();
+//                },
+//                error: function (data) { console.log(data) }
+//            });
+//        }
+
+           function createAutoClosingAlert(selector, delay) {
+            var alert = $(selector).alert();
+            window.setTimeout(function () { alert.alert('close') }, delay);
+        }
+
+
+        $(document).ready(function() {
+            // when the DOM has fully loaded...
+            $(".btnSave").bind("click", function() {
+                var id = this.getAttribute("data-id");
+                var ptype = this.getAttribute("data-p-type");
+//                  var onEventLaunchMe;
+                if (ptype == 'SFTP') {
+                    var   onEventLaunchMe = new PostRunSFTP();
+                } else if (ptype == 'Log') {
+                    onEventLaunchMe = new PostRunLog();
+                }
+                onEventLaunchMe.launchParam(id, ptype);
+            });
+        });
+  
+
+        function PostRunLog() {
+            this.launchParam = function(Id, pType) {
+                //show spinner
+                $("#btnRunLog").button('loading');
+                // fetch values from input
+                var val = $("#output_xml").val();
+
+                var pid = Id;
+
+                //val = $(".editScheduleDescription")[0].innerHTML;
+
+                // build json object
+                var param = {
+                    id: pid,
+                    Value: val,
+
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "../../Test/RunLog",
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(param),
+                    success: function(data) {
+                        console.log(data);
+                        //update the status
+
+                        
+                        if (data.success) {
+                            $("#btnRunLog").button('complete');
+              $("#content").html("<div class='success'>"+data.Message +"</div>");
+
+                             $("#content").html("<div class='success'>"+data.Message +"</div>");
+
+                            setTimeout(function() {
+                                $("#btnRunLog").button('reset');
+                            }, 2000);
+                        }
+                                                                                                         
+                         else {
+                            $("#btnRunLog").button('error');
+                            $("#content").html("<div class='failed'>"+data.Message +"</div>");
+                            setTimeout(function() {
+                                $("#btnRunLog").button('reset');
+                            }, 2000);
+                        }
+                        
+                    },
+                    error: function(data) {
+                        console.log(data);
+                        $("#content").html("<div class='failed'>"+data.Message +"</div>");
+                        //update the status
+                        $("#btnRunLog").button('error');
+                       $("#content").html("<div class='failed'>"+data.Message +"</div>");
+                        setTimeout(function() {
+                            $("#btnRunLog").button('reset');
+                        }, 2000);
+                    }
+                });
+
+
+            }
+
+
+        }
+
+        function PostRunSFTP() {
+            this.launchParam = function(Id, pType) {
+                //show spinner
+                $("#btnRunSFTP").button('loading');
+                // fetch values from input
+                var val = $("#output_location_1").val();
+                var val2 = $("#output_location_2").val();
+                var pid = Id;
+
+                //val = $(".editScheduleDescription")[0].innerHTML;
+
+                // build json object
+                var param = {
+                    id: pid,
+                    Value: val,
+                    Value2: val2
+
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "../../Test/RunSFTP",
+                    traditional: true,
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(param),
+                    success: function(data) {
+                        console.log(data);
+                        //update the status
+
+                         if (data.success) {
+                            $("#btnRunSFTP").button('complete');
+              $("#content2").html("<div class='success'>"+data.Message +"</div>");
+
+                             $("#content2").html("<div class='success'>"+data.Message +"</div>");
+
+                            setTimeout(function() {
+                                $("#btnRunSFTP").button('reset');
+                            }, 2000);
+                        } else {
+                            $("#btnRunSFTP").button('error');
+
+                            $("#content2").html("<div class='failed'>"+data.Message +"</div>");
+
+                             $("#content2").html("<div class='failed'>"+data.Message +"</div>");
+
+                            setTimeout(function() {
+                                $("#btnRunSFTP").button('reset');
+                            }, 2000);
+                        }
+                    },
+                     error: function(data) {
+                        console.log(data);
+                        //update the status
+                        $("#btnRunSFTP").button('error');
+
+                        $("#content2").html("<div class='failed'>"+data.Message +"</div>");
+
+                         $("#content2").html("<div class='failed'>"+data.Message +"</div>");
+
+                        setTimeout(function() {
+                            $("#btnRunSFTP").button('reset');
+                        }, 2000);
+                    }
+                });
+            }
+        }
+    </script>
+       
+                       
+    <style>
+        .success
+        {
+            border: solid 1px rgb(13,109,0);
+            width: 300px;
+            padding: 5px;
+            background-color: rgb(215,255,218);
+        }
+        .failed
+        {
+            border: solid 1px red;
+            width: 300px;
+            padding: 5px;
+            background-color: rgb(255,229,229);
+        }
+    </style>
+}

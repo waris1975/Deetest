@@ -1,0 +1,47 @@
+﻿@model System.Data.DataTable 
+@using System.Data;
+@{
+    ViewBag.Title = "Data Validation";
+   
+}
+
+<h2>Data Validation</h2>
+
+
+
+
+<table class="table table-condensed table-striped table-hover">
+    <thead> 
+        <tr>
+             
+            @foreach (DataColumn col in Model.Columns)     
+            {          
+                <th style="text-align: left;">
+                    @col.ColumnName
+                </th> 
+            }     
+        </tr> 
+    </thead>         
+    <tbody> 
+    @foreach (DataRow row in Model.Rows)     
+    {         
+        <tr> 
+        @foreach (DataColumn col in Model.Columns)         
+        {              
+            <td style="text-align: left;">
+                @row[col.ColumnName]
+            </td> 
+        }         
+        </tr> 
+    }     
+    </tbody> 
+</table>
+
+@section Styles{
+    <style type="text/css">
+        .table td, .table th
+        {
+            text-align: center;
+        }
+    </style>
+}

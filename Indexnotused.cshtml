@@ -1,0 +1,103 @@
+﻿@model  IEnumerable<MemberCommunications.Web.ViewModels.JobViewModel>
+@*@model PagedList.IPagedList<MemberCommunications.Web.ViewModels.JobViewModel>*@
+@using PagedList
+@using PagedList.Mvc
+
+
+@{
+    ViewBag.Title = "Available Reports";
+}
+<h2>@ViewBag.Title</h2>
+ 
+@using (Html.BeginForm())
+{
+
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Report Name" /></p>
+}
+<table class="table table-condensed  table-striped table-hover">
+    <tr>        
+        @*<th>
+           @Html.DisplayNameFor(model => model.id)
+        </th>*@
+        <th>
+            @*@Html.DisplayNameFor(model => model.parentReportName)*@
+            @Html.ActionLink("ReportName", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().run_start)
+            <th>
+                @Html.DisplayNameFor(model => model.First().run_end)
+               @Html.ActionLink("End Time", "Index", new { sortOrder = ViewBag.DateSortParm })
+            </th>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().messages)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().upd_activity_log)
+        </th>
+             
+     </tr>
+
+        
+        @foreach (var item in Model)
+        { 
+            <tr>
+                <td style="text-align: left;">
+                @Html.DisplayFor(modelItem => item.id)
+            </td>
+                <td class="form-group  col_md-5 col-lg-2">
+                    @Html.DisplayFor(modelItem => item.parentReportName)
+                </td>
+                <td class="form-group  col_md-5 col-lg-2" style="text-align: left;">
+                    @Html.DisplayFor(modelItem => item.run_start)
+                </td>
+                <td class="form-group  col_md-5 col-lg-2" style="text-align: left;">
+                    @Html.DisplayFor(modelItem => item.run_end)
+                </td>
+                <td class="form-group  col_md-5 col-lg-2">
+                    @Html.DisplayFor(modelItem => item.messages)
+                </td>
+                <td class="form-group  col_md-5 col-lg-2">
+                    @Html.LabelFor(modelItem => item.upd_activity_log, "")
+                    @*<p class="clearfix">
+                        <button type="submit" value="Complete" class="btn btn-primary">
+                            Run activity</button>
+                    </p>*@
+                    @Html.ActionLink("Details", "Details", new { id = item.id }, new { @class = "btn btn-info" })
+                </td>
+
+                
+                 </tr>
+        
+          
+                     
+        }
+     
+       
+        <footer class="footer">
+    <div class="container">
+         
+
+        <div >
+          
+           @* <p class="text-muted">&copy; 2015 - Dominion Dental Services</p>*@
+        </div>
+    </div>
+</footer>
+
+
+</table>
+<br/>@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }))
+
+@section Styles {
+<style type="text/css">
+        .table td, .table th
+        {
+            text-align: center;
+        }
+    </style>
+}
+

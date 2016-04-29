@@ -1,0 +1,75 @@
+﻿@model IPagedList<MemberCommunications.Web.ViewModels.JobViewModel>
+@using PagedList
+@using PagedList.Mvc
+
+<h2>@ViewBag.Title</h2>
+<br/>
+ 
+
+ 
+  <div class="row ">
+                    <div class="container col-xs-11">
+                
+                    <p class="col-sm-6">
+                        Find by Date: @Html.TextBox("SearchString" )
+                        <button  class="btn btn-default">Search</button>
+                     
+                    </p> 
+         
+  @*<input type="submit" value="Search" />*@
+                    <p class="col-sm-5">
+                     Order by <button  class="jobSort btn btn-default" data-id="@Model.First().report_id" data-sort-val="@ViewBag.DateSortParm">@ViewBag.DateSortParm</button>
+                     </p>
+                     </div>
+                </div>  
+      
+
+
+
+<ul class="list-group">
+    @foreach (var item in Model)
+    {
+        @*<tr>
+            <td style="text-align: left;">
+                @Html.DisplayFor(modelItem => item.id)
+            </td>
+            <td >
+                @Html.DisplayFor(modelItem => item.run_start)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.run_end)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.complete)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new {id = item.id}, new {@class = "btn btn-info"})
+            </td>
+        </tr>*@
+         <li class="list-group-item list-group-item-info">
+            
+    <span class="label label-default">Job ID</span> @Html.DisplayFor(modelItem => item.id) 
+
+    <span class="label label-default">Complete Date</span> @Html.DisplayFor(modelItem => item.run_end) 
+    <span class="label label-default"> Activity Log Run?</span> @item.upd_activity_log 
+             <span class="label label-default">FTP sent?</span> @item.send_sftp 
+    @Html.ActionLink("Details", "Details", new { id = item.id }, new { @class = "btn btn-info" })
+     @Html.ActionLink("Data Valitation", "DataVal", new { id = item.id }, new { @class = "btn btn-info" })
+  </li>
+    }
+
+</ul>
+
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $(".DatePicker").datepicker({
+      dateFormat: 'dd M yy',
+      changeMonth: true,
+      changeYear: true,
+     });
+  });
+ </script>
+
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("_JobIndex", new { page, reportId = Model.First().report_id }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "unobtrusive_" + Model.First().report_id, OnComplete = "PagedOnComplete" }))
+
