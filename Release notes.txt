@@ -1,0 +1,38 @@
+﻿BACKLOAD DEMO
+Author: Steffen Habermehl
+License: MIT
+Copyright: Steffen Habermehl 2013. All rights reserved.
+Project page: https://github.com/blackcity/Backload
+Documentation/Setup: https://github.com/blackcity/Backload/wiki
+NuGet: http://nuget.org/packages/Backload/
+Packet manager: PM> Install-Package Backload 
+
+This demo includes the original demo from the jQuery File Upload plugin together with the Backload server side upload controller/handler. 
+
+
+IMPORTANT INSTALLATION NOTE:
+_Layout.cshtml and JQueryUI.cshtml expect the bundles "~/bundles/jquery" (jQuery) and "~/bundles/jqueryui" (jQuery UI) 
+to be setup with this path.Alternatively add the js files for jQuery and jQueryUI manually to the pages. 
+1. Resister bundeling in the global.asax: 
+	BundleConfig.RegisterBundles(BundleTable.Bundles);
+2. In ~/App_Start/BundleConfig.cs add jQuery and jQueryUI:
+    bundles.Add(new ScriptBundle("~/bundles/jquery").Include("~/Scripts/jquery-{version}.js"));
+	bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include("~/Scripts/jquery-ui-{version}.js"));
+
+Standalone version of the demo on GitHub: https://github.com/blackcity/Backload/archive/master.zip
+
+
+MORE EXAMPLES ON GITHUB:
+For more examples and documentation on Backload see project page on GitHub:
+Example 01: Zero configuration
+Example 02: Configuration basics: Using web.config
+Example 03: Configuration basics: Using an external config file
+Example 04: Using your own controllers
+Example 05: Using server side image manipulation features
+Example 06: Managing subfolders: Using the object context
+Example 07: Managing subfolders: Using the upload context
+Example 08: Extensibility: Writing extensions
+Example 09: Extensibility: Handling PlUpload (Moxiecode) and make it a full filemanager
+Example 10: Handling exceptions
+Example 11: Asynchronous operations with async/await, Tasks and Threads
+Example 12: Server side events of the processing pipeline
